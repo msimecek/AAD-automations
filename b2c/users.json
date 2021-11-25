@@ -1,0 +1,14 @@
+{
+   "users": [
+    {
+      "displayName": "Heidi Gamemasterova",
+      "email": "heidi.gamemaster@b2c.demo",
+      "gameMaster": true
+    },
+    {
+      "displayName": "Thomas Smoke-Tester",
+      "email": "thomas.smoketester@b2c.demo",
+      "gameMaster": false
+    }
+  ]
+}
