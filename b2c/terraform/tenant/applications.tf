@@ -2,7 +2,6 @@
 #   type = string
 # }
 
-data "azuread_client_config" "current" {}
 data "azuread_application_published_app_ids" "well_known" {}
 
 resource "azuread_service_principal" "msgraph" {
@@ -16,8 +15,7 @@ resource "random_uuid" "gameaccess_scope_id" {}
 # Application with certificate
 #
 resource "azuread_application" "graph_worker" {
-  display_name     = "GraphWorker_App"
-  owners           = [data.azuread_client_config.current.object_id]
+  display_name     = "GraphWorker_App2"
   sign_in_audience = "AzureADMyOrg"
 
   web {
@@ -56,10 +54,9 @@ resource "azuread_app_role_assignment" "graph_worker" {
 #
 resource "azuread_application" "api" {
   display_name     = "Api"
-  owners           = [data.azuread_client_config.current.object_id]
   sign_in_audience = "AzureADandPersonalMicrosoftAccount"
 
-  identifier_uris = [ "https://${azurerm_aadb2c_directory.tenant.domain_name}/apinka" ]
+  identifier_uris = [ "https://${var.tenant_domain_name}/apinka" ]
 
   api {
     requested_access_token_version = 2
