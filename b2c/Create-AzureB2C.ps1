@@ -15,9 +15,12 @@ function Initialize-B2CTenant {
     [Parameter(Mandatory = $true, HelpMessage = "Name of the Azure Resource Group to put the B2C resource into. Will be created if it does not exist.")]
     [string] $ResourceGroupName,
 
-    [string] $Location = "Europe",
+    [Parameter()]
+    [ValidateSet('United States','Europe','Asia Pacific', 'Australia')]
+    [string] $Location = 'Europe',
     
     [Parameter(HelpMessage = "Two letter country code (e.g. 'US', 'CZ', 'DE'). https://docs.microsoft.com/en-us/azure/active-directory-b2c/data-residency")]
+    [ValidateSet('AU', 'NZ', 'AF', 'HK', 'IN', 'ID', 'JP', 'KR', 'MY', 'PH', 'SG', 'LK', 'TW', 'TH', 'DZ', 'AT', 'AZ', 'BH', 'BY', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EG', 'EE', 'FT', 'FR', 'DE', 'GR', 'HU', 'IS', 'IE', 'IL', 'IT', 'JO', 'KZ', 'KE', 'KW', 'LV', 'LB', 'LI', 'LT', 'LU', 'ML', 'MT', 'ME', 'MA', 'NL', 'NG', 'NO', 'OM', 'PK', 'PL', 'PT', 'QA', 'RO', 'RU', 'SA', 'RS', 'SK', 'ST', 'ZA', 'ES', 'SE', 'CH', 'TN', 'TR', 'UA', 'AE', 'GB', 'US', 'CA', 'CR', 'DO', 'SV', 'GT', 'MX', 'PA', 'PR', 'TT')]
     [string] $CountryCode = "GB"
   )
 
@@ -104,6 +107,8 @@ function New-AzureADB2CTenant {
 
     # Where data resides. Two letter country code (e.g. 'US', 'CZ', 'DE').
     # Valid country codes are listed here: https://docs.microsoft.com/en-us/azure/active-directory-b2c/data-residency
+    [Parameter(HelpMessage = "Two letter country code (e.g. 'US', 'CZ', 'DE'). https://docs.microsoft.com/en-us/azure/active-directory-b2c/data-residency")]
+    [ValidateSet('AU', 'NZ', 'AF', 'HK', 'IN', 'ID', 'JP', 'KR', 'MY', 'PH', 'SG', 'LK', 'TW', 'TH', 'DZ', 'AT', 'AZ', 'BH', 'BY', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EG', 'EE', 'FT', 'FR', 'DE', 'GR', 'HU', 'IS', 'IE', 'IL', 'IT', 'JO', 'KZ', 'KE', 'KW', 'LV', 'LB', 'LI', 'LT', 'LU', 'ML', 'MT', 'ME', 'MA', 'NL', 'NG', 'NO', 'OM', 'PK', 'PL', 'PT', 'QA', 'RO', 'RU', 'SA', 'RS', 'SK', 'ST', 'ZA', 'ES', 'SE', 'CH', 'TN', 'TR', 'UA', 'AE', 'GB', 'US', 'CA', 'CR', 'DO', 'SV', 'GT', 'MX', 'PA', 'PR', 'TT')]
     [string] $CountryCode,
 
     # Under which Azure subscription will this B2C tenant reside. If not provided, use the current subscription from Azure CLI.
@@ -143,7 +148,7 @@ function New-AzureADB2CTenant {
 
   if (!$checkRg) {
     Write-Warning "Resource Group $AzureResourceGroup does not exist. Creating..."
-    az group create --name $AzureResourceGroup --location "northeurope" # Everybody likes Ireland, so we put the RG there if it does not exist
+    az group create --name $AzureResourceGroup --location $(($Location.ToLower()).replace(' ','')) # Everybody likes Ireland, so we put the RG there if it does not exist
   }
 
   $resourceId = "/subscriptions/$AzureSubscriptionId/resourceGroups/$AzureResourceGroup/providers/Microsoft.AzureActiveDirectory/b2cDirectories/$B2CTenantName.onmicrosoft.com"
@@ -192,7 +197,7 @@ function New-AzureADB2CTenant {
     Write-Host "Waiting for 30 seconds for B2C tenant creation..."
     Start-Sleep -Seconds 30
 
-    az resource show --id $resourceId
+    az resource show --id $resourceId 
   }
   while($LastExitCode -ne 0)
 }
