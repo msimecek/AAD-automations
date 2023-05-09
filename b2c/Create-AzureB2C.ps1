@@ -148,7 +148,7 @@ function New-AzureADB2CTenant {
 
   if (!$checkRg) {
     Write-Warning "Resource Group $AzureResourceGroup does not exist. Creating..."
-    az group create --name $AzureResourceGroup --location $(($Location.ToLower()).replace(' ','')) # Everybody likes Ireland, so we put the RG there if it does not exist
+    az group create --name $AzureResourceGroup --location $(($Location.ToLower()).replace(' ','')) # Using logical locations here 
   }
 
   $resourceId = "/subscriptions/$AzureSubscriptionId/resourceGroups/$AzureResourceGroup/providers/Microsoft.AzureActiveDirectory/b2cDirectories/$B2CTenantName.onmicrosoft.com"
